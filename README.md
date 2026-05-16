@@ -313,8 +313,8 @@ Unverified influence claims must not automatically generate strong allocation ri
 Therefore, this model seeks a middle balance.
 
 ```text
-Too much Yang → only explicit records matter
-Too much Yin  → vague influence claims dominate
+Too much Yang  → only explicit records matter
+Too much Yin   → vague influence claims dominate
 Middle Balance → evidence and structure are both considered
 ```
 
@@ -333,7 +333,14 @@ contribution-tolerance-band-model/
 │  └─ workflows/
 │     └─ validate-specs.yml
 ├─ docs/
-│  └─ contribution-tolerance-band-model.md
+│  ├─ contribution-tolerance-band-model.md
+│  ├─ relationship-to-royalty-os.md
+│  ├─ relationship-to-ksd.md
+│  ├─ relationship-to-trace-protocol.md
+│  ├─ relationship-to-dispute-registry.md
+│  ├─ allocation-readiness.md
+│  ├─ review-status-notes.md
+│  └─ governance-bridge-notes.md
 ├─ examples/
 │  └─ contribution-tolerance-band.sample.json
 ├─ schemas/
@@ -347,7 +354,7 @@ contribution-tolerance-band-model/
 ## Start Here
 
 - [`docs/contribution-tolerance-band-model.md`](docs/contribution-tolerance-band-model.md)  
-  Main explanatory document for the model.
+  Main explanatory document for the Contribution Tolerance Band Model.
 
 - [`schemas/contribution-tolerance-band-v0.1.schema.json`](schemas/contribution-tolerance-band-v0.1.schema.json)  
   JSON Schema for validating Contribution Tolerance Band records.
@@ -357,6 +364,31 @@ contribution-tolerance-band-model/
 
 - [`.github/workflows/validate-specs.yml`](.github/workflows/validate-specs.yml)  
   GitHub Actions workflow for validating schema compliance and numerical consistency.
+
+---
+
+## Related Documents
+
+- [`docs/relationship-to-royalty-os.md`](docs/relationship-to-royalty-os.md)  
+  Explains how this model serves as the uncertainty-aware contribution layer for Royalty OS.
+
+- [`docs/relationship-to-ksd.md`](docs/relationship-to-ksd.md)  
+  Explains how KSD and Structure Fingerprint provide structural evidence for contribution assessment.
+
+- [`docs/relationship-to-trace-protocol.md`](docs/relationship-to-trace-protocol.md)  
+  Explains how Trace Protocol records become trace evidence for contribution ranges.
+
+- [`docs/relationship-to-dispute-registry.md`](docs/relationship-to-dispute-registry.md)  
+  Explains how disputed or contested contribution assessments should be governed.
+
+- [`docs/allocation-readiness.md`](docs/allocation-readiness.md)  
+  Defines when a contribution assessment is stable enough to influence allocation.
+
+- [`docs/review-status-notes.md`](docs/review-status-notes.md)  
+  Explains assessment lifecycle states, review reasons, and review transitions.
+
+- [`docs/governance-bridge-notes.md`](docs/governance-bridge-notes.md)  
+  Connects assessment, review, readiness, dispute handling, and Royalty OS allocation policy.
 
 ---
 
@@ -506,6 +538,8 @@ This model does not replace Royalty OS.
 
 It strengthens Royalty OS by preventing false precision in contribution scoring.
 
+See also: [`docs/relationship-to-royalty-os.md`](docs/relationship-to-royalty-os.md)
+
 ---
 
 ## Relationship to KSD / Structure Fingerprint
@@ -524,6 +558,8 @@ Contribution Tolerance Band Model uses this evidence to adjust the tolerance ban
 Strong structural evidence narrows uncertainty.
 
 Weak or ambiguous structural evidence widens uncertainty.
+
+See also: [`docs/relationship-to-ksd.md`](docs/relationship-to-ksd.md)
 
 ---
 
@@ -544,6 +580,8 @@ Contribution Tolerance Band Model uses trace confidence to determine whether the
 Clear trace paths generally narrow the tolerance band.
 
 Missing, indirect, or disputed trace paths generally widen the tolerance band.
+
+See also: [`docs/relationship-to-trace-protocol.md`](docs/relationship-to-trace-protocol.md)
 
 ---
 
@@ -580,6 +618,62 @@ Dispute Registry may record:
 Contribution Tolerance Band Model should not hide disputes.
 
 It should make uncertain or contested contribution visible.
+
+See also: [`docs/relationship-to-dispute-registry.md`](docs/relationship-to-dispute-registry.md)
+
+---
+
+## Allocation Readiness
+
+Allocation Readiness defines when a Contribution Tolerance Band assessment is sufficiently stable to influence allocation.
+
+A contribution assessment should not automatically become an allocation decision.
+
+It must pass a readiness gate based on:
+
+- tolerance band width
+- evidence strength
+- trace confidence
+- estimator agreement
+- dispute risk
+- review status
+- value at risk
+
+See also: [`docs/allocation-readiness.md`](docs/allocation-readiness.md)
+
+---
+
+## Review Status
+
+Review Status defines how contribution assessments express lifecycle state and review requirements.
+
+An assessment may be:
+
+```text
+draft
+active
+review_required
+disputed
+superseded
+revoked
+archived
+```
+
+Review status prevents unstable assessments from being mistaken for final decisions.
+
+See also: [`docs/review-status-notes.md`](docs/review-status-notes.md)
+
+---
+
+## Governance Bridge
+
+Governance Bridge connects assessment, review, allocation readiness, dispute handling, and Royalty OS allocation policy.
+
+Its core rule is:
+
+> A contribution range should never become an allocation decision without governance.
+
+See also: [`docs/governance-bridge-notes.md`](docs/governance-bridge-notes.md)
 
 ---
 
@@ -643,6 +737,13 @@ examples/
 
 docs/
   contribution-tolerance-band-model.md
+  relationship-to-royalty-os.md
+  relationship-to-ksd.md
+  relationship-to-trace-protocol.md
+  relationship-to-dispute-registry.md
+  allocation-readiness.md
+  review-status-notes.md
+  governance-bridge-notes.md
 
 .github/workflows/
   validate-specs.yml
@@ -666,8 +767,10 @@ Contribution Tolerance Band Model v0.1 introduces:
 - estimator consensus
 - range overlap handling
 - review triggers
+- allocation readiness
 - shared pool handling
 - dispute-aware allocation guidance
+- governance-aware review flow
 - machine-readable validation
 
 Its central principle is:
