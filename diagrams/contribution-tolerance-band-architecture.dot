@@ -1,0 +1,340 @@
+digraph ContributionToleranceBandArchitecture {
+  graph [
+    label="Contribution Tolerance Band Model v0.1 - Architecture",
+    labelloc=top,
+    fontsize=20,
+    fontname="Arial",
+    rankdir=LR,
+    bgcolor="white",
+    pad=0.4,
+    nodesep=0.55,
+    ranksep=0.75
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=11,
+    color="#444444",
+    fillcolor="#f7f7f7",
+    margin="0.12,0.08"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=10,
+    color="#555555",
+    arrowsize=0.8
+  ];
+
+  // ------------------------------------------------------------
+  // Evidence Sources
+  // ------------------------------------------------------------
+
+  subgraph cluster_evidence {
+    label="Evidence Sources";
+    fontsize=14;
+    color="#999999";
+    style="rounded,dashed";
+
+    TraceProtocol [
+      label="Trace Protocol\nAccess / Influence / Audit / Reference Trace",
+      fillcolor="#eef6ff"
+    ];
+
+    KSD [
+      label="KSD / Structure Fingerprint\nQuestion / Structure / Pattern / Lineage Signals",
+      fillcolor="#eef6ff"
+    ];
+
+    Provenance [
+      label="Provenance Records\nTimestamps / Repository History / C2PA-style Metadata",
+      fillcolor="#eef6ff"
+    ];
+
+    Attestation [
+      label="Signed Impact Attestation\nAccountable Impact Claims",
+      fillcolor="#eef6ff"
+    ];
+
+    HumanReview [
+      label="Human / Community Review\nContext / Domain Judgment / Review Notes",
+      fillcolor="#eef6ff"
+    ];
+  }
+
+  // ------------------------------------------------------------
+  // Lineage and Estimation Layer
+  // ------------------------------------------------------------
+
+  subgraph cluster_estimation {
+    label="Lineage and Estimation Layer";
+    fontsize=14;
+    color="#999999";
+    style="rounded,dashed";
+
+    LineageEngine [
+      label="Lineage Engine\norigin / derived_from / adapted_from / influenced_by",
+      fillcolor="#f1f0ff"
+    ];
+
+    ModelWeighting [
+      label="Model Weighting\nWeighted / Median / Confidence-adjusted Estimation",
+      fillcolor="#f1f0ff"
+    ];
+
+    BandWidth [
+      label="Band Width Function\nCalculates ε from uncertainty factors",
+      fillcolor="#f1f0ff"
+    ];
+
+    TemporalAdjustment [
+      label="Temporal Adjustment\nEvidence age / diffusion / supersession / clarification",
+      fillcolor="#f1f0ff"
+    ];
+
+    AntiGaming [
+      label="Anti-Gaming Rules\nTrace spam / overclaim / false provenance / bad-faith disputes",
+      fillcolor="#fff4e8"
+    ];
+  }
+
+  // ------------------------------------------------------------
+  // Core Model
+  // ------------------------------------------------------------
+
+  subgraph cluster_core {
+    label="Contribution Tolerance Band Core";
+    fontsize=14;
+    color="#999999";
+    style="rounded,dashed";
+
+    CTB [
+      label="Contribution Tolerance Band Model\nC = μ ± ε",
+      fillcolor="#eafbea",
+      penwidth=2
+    ];
+
+    RangeOutput [
+      label="Contribution Range\nlower_bound / upper_bound / confidence",
+      fillcolor="#eafbea"
+    ];
+
+    ContributionLayers [
+      label="Contribution Layers\nPrimary / Near / Supporting / Shared / Disputed",
+      fillcolor="#eafbea"
+    ];
+  }
+
+  // ------------------------------------------------------------
+  // Governance Layer
+  // ------------------------------------------------------------
+
+  subgraph cluster_governance {
+    label="Governance Layer";
+    fontsize=14;
+    color="#999999";
+    style="rounded,dashed";
+
+    ReviewStatus [
+      label="Review Status\ndraft / active / review_required / disputed / superseded",
+      fillcolor="#fff9d9"
+    ];
+
+    AllocationReadiness [
+      label="Allocation Readiness\nallocation_ready / pooled_ready / disputed / not_ready",
+      fillcolor="#fff9d9"
+    ];
+
+    DisputeRegistry [
+      label="Dispute Registry\nobjection / correction / supersession / revocation",
+      fillcolor="#fff9d9"
+    ];
+
+    GovernanceBridge [
+      label="Governance Bridge\nConnects assessment, readiness, dispute, and allocation policy",
+      fillcolor="#fff9d9",
+      penwidth=2
+    ];
+  }
+
+  // ------------------------------------------------------------
+  // Allocation Layer
+  // ------------------------------------------------------------
+
+  subgraph cluster_allocation {
+    label="Royalty / Allocation Layer";
+    fontsize=14;
+    color="#999999";
+    style="rounded,dashed";
+
+    RoyaltyOS [
+      label="Royalty OS\nPermission / Trace / Allocation / Value Circulation",
+      fillcolor="#ffeef4",
+      penwidth=2
+    ];
+
+    AllocationOutcomes [
+      label="Allocation Outcomes\nAutomatic / Pooled / Equalized / Deferred / Common Culture Pool",
+      fillcolor="#ffeef4"
+    ];
+  }
+
+  // ------------------------------------------------------------
+  // Evidence flows
+  // ------------------------------------------------------------
+
+  TraceProtocol -> LineageEngine [
+    label="trace paths"
+  ];
+
+  KSD -> LineageEngine [
+    label="structural signals"
+  ];
+
+  Provenance -> ModelWeighting [
+    label="visible evidence"
+  ];
+
+  Attestation -> ModelWeighting [
+    label="accountable claims"
+  ];
+
+  HumanReview -> ModelWeighting [
+    label="contextual review"
+  ];
+
+  TraceProtocol -> BandWidth [
+    label="trace uncertainty"
+  ];
+
+  KSD -> BandWidth [
+    label="structure ambiguity"
+  ];
+
+  Provenance -> BandWidth [
+    label="evidence strength"
+  ];
+
+  LineageEngine -> ModelWeighting [
+    label="lineage relation"
+  ];
+
+  LineageEngine -> BandWidth [
+    label="lineage confidence"
+  ];
+
+  ModelWeighting -> CTB [
+    label="estimated value μ"
+  ];
+
+  BandWidth -> CTB [
+    label="tolerance band ε"
+  ];
+
+  TemporalAdjustment -> BandWidth [
+    label="temporal uncertainty"
+  ];
+
+  AntiGaming -> BandWidth [
+    label="manipulation risk"
+  ];
+
+  AntiGaming -> ReviewStatus [
+    label="review trigger"
+  ];
+
+  // ------------------------------------------------------------
+  // Core outputs
+  // ------------------------------------------------------------
+
+  CTB -> RangeOutput [
+    label="range"
+  ];
+
+  CTB -> ContributionLayers [
+    label="layer classification"
+  ];
+
+  RangeOutput -> ReviewStatus [
+    label="wide / narrow / overlap"
+  ];
+
+  ContributionLayers -> AllocationReadiness [
+    label="layer stability"
+  ];
+
+  RangeOutput -> AllocationReadiness [
+    label="readiness signals"
+  ];
+
+  // ------------------------------------------------------------
+  // Governance flows
+  // ------------------------------------------------------------
+
+  ReviewStatus -> AllocationReadiness [
+    label="status gate"
+  ];
+
+  AllocationReadiness -> GovernanceBridge [
+    label="ready / review / defer"
+  ];
+
+  DisputeRegistry -> GovernanceBridge [
+    label="dispute outcome"
+  ];
+
+  ReviewStatus -> DisputeRegistry [
+    label="formal challenge"
+  ];
+
+  GovernanceBridge -> RoyaltyOS [
+    label="safe allocation policy"
+  ];
+
+  RoyaltyOS -> AllocationOutcomes [
+    label="execute allocation"
+  ];
+
+  // ------------------------------------------------------------
+  // Feedback loops
+  // ------------------------------------------------------------
+
+  DisputeRegistry -> TemporalAdjustment [
+    label="supersession / correction",
+    style=dashed
+  ];
+
+  AllocationOutcomes -> TemporalAdjustment [
+    label="long-term effects",
+    style=dashed
+  ];
+
+  TemporalAdjustment -> CTB [
+    label="updated assessment",
+    style=dashed
+  ];
+
+  // ------------------------------------------------------------
+  // Safety principle
+  // ------------------------------------------------------------
+
+  SafetyPrinciple [
+    label="Core Safety Principle\nDo not force exactness where exactness cannot be justified.\nUncertainty should be visible, bounded, explainable, and governable.",
+    shape=note,
+    fillcolor="#ffffff",
+    color="#777777",
+    fontsize=11
+  ];
+
+  SafetyPrinciple -> CTB [
+    style=dotted,
+    label="design principle"
+  ];
+
+  SafetyPrinciple -> GovernanceBridge [
+    style=dotted,
+    label="governance principle"
+  ];
+}
