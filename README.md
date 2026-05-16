@@ -340,7 +340,12 @@ contribution-tolerance-band-model/
 │  ├─ relationship-to-dispute-registry.md
 │  ├─ allocation-readiness.md
 │  ├─ review-status-notes.md
-│  └─ governance-bridge-notes.md
+│  ├─ governance-bridge-notes.md
+│  ├─ band-width-function.md
+│  ├─ model-weighting-notes.md
+│  ├─ temporal-adjustment-notes.md
+│  ├─ anti-gaming-rules.md
+│  └─ lineage-engine-integration.md
 ├─ examples/
 │  └─ contribution-tolerance-band.sample.json
 ├─ schemas/
@@ -369,6 +374,36 @@ contribution-tolerance-band-model/
 
 ## Related Documents
 
+### Core Model
+
+- [`docs/contribution-tolerance-band-model.md`](docs/contribution-tolerance-band-model.md)  
+  Main explanatory document for the Contribution Tolerance Band Model.
+
+- [`docs/band-width-function.md`](docs/band-width-function.md)  
+  Defines how tolerance band width should widen or narrow based on evidence, trace confidence, estimator variance, and dispute risk.
+
+- [`docs/model-weighting-notes.md`](docs/model-weighting-notes.md)  
+  Explains how multiple estimators should be weighted, aggregated, adjusted, and audited.
+
+- [`docs/temporal-adjustment-notes.md`](docs/temporal-adjustment-notes.md)  
+  Explains how contribution ranges, confidence, evidence strength, and allocation readiness may change over time.
+
+### Governance and Allocation
+
+- [`docs/allocation-readiness.md`](docs/allocation-readiness.md)  
+  Defines when a contribution assessment is stable enough to influence allocation.
+
+- [`docs/review-status-notes.md`](docs/review-status-notes.md)  
+  Explains assessment lifecycle states, review reasons, and review transitions.
+
+- [`docs/governance-bridge-notes.md`](docs/governance-bridge-notes.md)  
+  Connects assessment, review, readiness, dispute handling, and Royalty OS allocation policy.
+
+- [`docs/anti-gaming-rules.md`](docs/anti-gaming-rules.md)  
+  Defines safeguards against artificial ambiguity, trace spam, overclaiming, false provenance, bad-faith disputes, and other manipulation risks.
+
+### Relationship Documents
+
 - [`docs/relationship-to-royalty-os.md`](docs/relationship-to-royalty-os.md)  
   Explains how this model serves as the uncertainty-aware contribution layer for Royalty OS.
 
@@ -381,14 +416,8 @@ contribution-tolerance-band-model/
 - [`docs/relationship-to-dispute-registry.md`](docs/relationship-to-dispute-registry.md)  
   Explains how disputed or contested contribution assessments should be governed.
 
-- [`docs/allocation-readiness.md`](docs/allocation-readiness.md)  
-  Defines when a contribution assessment is stable enough to influence allocation.
-
-- [`docs/review-status-notes.md`](docs/review-status-notes.md)  
-  Explains assessment lifecycle states, review reasons, and review transitions.
-
-- [`docs/governance-bridge-notes.md`](docs/governance-bridge-notes.md)  
-  Connects assessment, review, readiness, dispute handling, and Royalty OS allocation policy.
+- [`docs/lineage-engine-integration.md`](docs/lineage-engine-integration.md)  
+  Explains how lineage records connect to contribution ranges, allocation readiness, dispute handling, and Royalty OS policy.
 
 ---
 
@@ -520,6 +549,100 @@ When review is required, allocation may be:
 
 ---
 
+## Band Width Function
+
+Band Width Function defines how the `tolerance_band` should be calculated or justified.
+
+The band should widen or narrow based on:
+
+- evidence strength
+- structure ambiguity
+- trace uncertainty
+- estimator variance
+- dispute risk
+- temporal uncertainty
+- manipulation risk
+
+Core idea:
+
+```text
+strong evidence → narrower band
+weak evidence   → wider band
+```
+
+See also: [`docs/band-width-function.md`](docs/band-width-function.md)
+
+---
+
+## Model Weighting
+
+Model Weighting explains how multiple estimators should be combined.
+
+Estimators may include:
+
+- structure estimator
+- provenance estimator
+- trace estimator
+- similarity estimator
+- human reviewer
+- community review
+- dispute-aware estimator
+- domain expert
+
+The goal is to avoid dependence on a single estimator.
+
+See also: [`docs/model-weighting-notes.md`](docs/model-weighting-notes.md)
+
+---
+
+## Temporal Adjustment
+
+Temporal Adjustment explains how contribution assessments may change over time.
+
+Time may:
+
+- strengthen evidence
+- weaken trace confidence
+- clarify lineage
+- increase cultural diffusion
+- reveal counter-evidence
+- resolve disputes
+- require supersession
+
+Core idea:
+
+> Time should not erase contribution, but time may change how contribution is interpreted.
+
+See also: [`docs/temporal-adjustment-notes.md`](docs/temporal-adjustment-notes.md)
+
+---
+
+## Anti-Gaming Rules
+
+Anti-Gaming Rules protect the model from manipulation.
+
+They address risks such as:
+
+- artificial ambiguity
+- range inflation
+- trace spam
+- false provenance
+- structure overclaim
+- similarity overclaim
+- bad-faith disputes
+- retroactive claim insertion
+- evidence flooding
+- model weighting manipulation
+- temporal gaming
+
+Core rule:
+
+> Uncertainty should not become entitlement.
+
+See also: [`docs/anti-gaming-rules.md`](docs/anti-gaming-rules.md)
+
+---
+
 ## Relationship to Royalty OS
 
 Contribution Tolerance Band Model can serve as an uncertainty-aware contribution layer for Royalty OS and trace-based allocation systems.
@@ -582,6 +705,33 @@ Clear trace paths generally narrow the tolerance band.
 Missing, indirect, or disputed trace paths generally widen the tolerance band.
 
 See also: [`docs/relationship-to-trace-protocol.md`](docs/relationship-to-trace-protocol.md)
+
+---
+
+## Relationship to Lineage Engine
+
+Lineage Engine identifies possible origin, derivation, adaptation, influence, or structural inheritance.
+
+Contribution Tolerance Band Model converts those lineage signals into uncertainty-aware contribution ranges.
+
+Lineage may include:
+
+- origin candidate
+- derived from
+- adapted from
+- influenced by
+- translated from
+- remixed from
+- implemented from
+- extended from
+- structurally similar to
+- conceptually related to
+
+Lineage is evidence of relationship.
+
+It is not automatic proof of contribution share.
+
+See also: [`docs/lineage-engine-integration.md`](docs/lineage-engine-integration.md)
 
 ---
 
@@ -744,6 +894,11 @@ docs/
   allocation-readiness.md
   review-status-notes.md
   governance-bridge-notes.md
+  band-width-function.md
+  model-weighting-notes.md
+  temporal-adjustment-notes.md
+  anti-gaming-rules.md
+  lineage-engine-integration.md
 
 .github/workflows/
   validate-specs.yml
@@ -765,6 +920,10 @@ Contribution Tolerance Band Model v0.1 introduces:
 - explainable tolerance bands
 - evidence-aware uncertainty
 - estimator consensus
+- model weighting
+- temporal adjustment
+- anti-gaming safeguards
+- lineage integration
 - range overlap handling
 - review triggers
 - allocation readiness
