@@ -1,0 +1,750 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kazene.org/schemas/contribution-tolerance-band-v0.1.schema.json",
+  "title": "Contribution Tolerance Band Model v0.1",
+  "description": "A schema for representing contribution as an interval-based estimate with an explainable tolerance band, supporting uncertainty-aware allocation, review triggers, and dispute-resistant royalty systems.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model",
+    "version",
+    "contribution_assessment_id",
+    "target_work_id",
+    "created_at",
+    "assessment_status",
+    "contributors",
+    "allocation_recommendation"
+  ],
+  "properties": {
+    "model": {
+      "type": "string",
+      "const": "Contribution Tolerance Band Model"
+    },
+    "version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "contribution_assessment_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this contribution tolerance band assessment.",
+      "examples": [
+        "ctb-2026-0001"
+      ]
+    },
+    "target_work_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the work, artifact, text, protocol, codebase, or output being assessed."
+    },
+    "target_work_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "book",
+        "article",
+        "code",
+        "schema",
+        "protocol",
+        "image",
+        "audio",
+        "video",
+        "dataset",
+        "model_output",
+        "mixed_media",
+        "other"
+      ],
+      "default": "other"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assessment_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "review_required",
+        "disputed",
+        "superseded",
+        "revoked",
+        "archived"
+      ],
+      "description": "Lifecycle status of this contribution assessment."
+    },
+    "methodology": {
+      "$ref": "#/$defs/methodology"
+    },
+    "contributors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/contributorAssessment"
+      }
+    },
+    "allocation_recommendation": {
+      "$ref": "#/$defs/allocationRecommendation"
+    },
+    "relationships": {
+      "$ref": "#/$defs/relationships"
+    },
+    "governance": {
+      "$ref": "#/$defs/governance"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "zeroToOne": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "methodology": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Information about how the contribution tolerance bands were calculated.",
+      "properties": {
+        "methodology_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "description": {
+          "type": "string"
+        },
+        "estimator_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/estimator"
+          }
+        },
+        "weights_profile": {
+          "$ref": "#/$defs/weightsProfile"
+        },
+        "tolerance_policy": {
+          "$ref": "#/$defs/tolerancePolicy"
+        }
+      }
+    },
+    "estimator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimator_id",
+        "estimator_type"
+      ],
+      "properties": {
+        "estimator_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "estimator_type": {
+          "type": "string",
+          "enum": [
+            "structure_estimator",
+            "provenance_estimator",
+            "similarity_estimator",
+            "trace_estimator",
+            "human_reviewer",
+            "community_review",
+            "dispute_aware_estimator",
+            "hybrid_estimator",
+            "other"
+          ]
+        },
+        "weight": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "weightsProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configurable weights used to calculate tolerance band width.",
+      "properties": {
+        "structure_ambiguity_weight": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "trace_uncertainty_weight": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "estimator_variance_weight": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "dispute_risk_weight": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "evidence_strength_weight": {
+          "$ref": "#/$defs/zeroToOne"
+        }
+      }
+    },
+    "tolerancePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Thresholds that determine whether automatic allocation, pooled allocation, or review is recommended.",
+      "properties": {
+        "max_tolerance_band": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "min_evidence_strength": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "min_trace_confidence": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "min_estimator_agreement": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "max_dispute_risk": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "wide_band_review_threshold": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "high_value_distribution_review_required": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "contributorAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contributor_id",
+        "estimated_value",
+        "tolerance_band",
+        "range",
+        "contribution_layer"
+      ],
+      "properties": {
+        "contributor_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "contributor_role": {
+          "type": "string",
+          "enum": [
+            "originator",
+            "co_creator",
+            "implementer",
+            "editor",
+            "reviewer",
+            "diffuser",
+            "structural_influence",
+            "supporting_contributor",
+            "unknown",
+            "other"
+          ],
+          "default": "unknown"
+        },
+        "estimated_value": {
+          "$ref": "#/$defs/zeroToOne",
+          "description": "Central estimated contribution value. This is not treated as a final exact value."
+        },
+        "tolerance_band": {
+          "$ref": "#/$defs/zeroToOne",
+          "description": "The uncertainty band around the estimated value."
+        },
+        "range": {
+          "$ref": "#/$defs/contributionRange"
+        },
+        "confidence": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "evidence_strength": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "trace_confidence": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "estimator_agreement": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "dispute_risk": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "uncertainty_factors": {
+          "$ref": "#/$defs/uncertaintyFactors"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidenceBundle"
+        },
+        "estimator_outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/estimatorOutput"
+          }
+        },
+        "contribution_layer": {
+          "type": "string",
+          "enum": [
+            "primary",
+            "near",
+            "supporting",
+            "shared_influence",
+            "unresolved",
+            "disputed"
+          ]
+        },
+        "yin_yang_balance": {
+          "$ref": "#/$defs/yinYangBalance"
+        },
+        "review_required": {
+          "type": "boolean",
+          "default": false
+        },
+        "review_reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewReason"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "$comment": "JSON Schema cannot natively enforce lower_bound = estimated_value - tolerance_band or upper_bound = estimated_value + tolerance_band without custom validation. Use workflow-level validation for arithmetic consistency."
+    },
+    "contributionRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lower_bound",
+        "upper_bound"
+      ],
+      "properties": {
+        "lower_bound": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "upper_bound": {
+          "$ref": "#/$defs/zeroToOne"
+        }
+      },
+      "$comment": "Use additional validation to ensure lower_bound <= upper_bound."
+    },
+    "uncertaintyFactors": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Factors that widen or narrow the tolerance band.",
+      "properties": {
+        "structure_ambiguity": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "trace_uncertainty": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "estimator_variance": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "temporal_uncertainty": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "dispute_uncertainty": {
+          "$ref": "#/$defs/zeroToOne"
+        }
+      }
+    },
+    "evidenceBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Evidence supporting or weakening the contribution estimate.",
+      "properties": {
+        "direct_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
+        },
+        "structural_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
+        },
+        "trace_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
+        },
+        "attestation_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
+        },
+        "counter_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
+        }
+      }
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "evidence_type"
+      ],
+      "properties": {
+        "evidence_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "evidence_type": {
+          "type": "string",
+          "enum": [
+            "citation",
+            "explicit_reference",
+            "timestamp",
+            "signature",
+            "repository_history",
+            "commit_log",
+            "publication_record",
+            "license_record",
+            "c2pa_provenance",
+            "content_credentials",
+            "structure_fingerprint",
+            "ksd_record",
+            "origin_question_similarity",
+            "conceptual_lineage",
+            "transformation_pattern",
+            "trace_path",
+            "signed_impact_attestation",
+            "human_review",
+            "community_review",
+            "dispute_record",
+            "other"
+          ]
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "description": {
+          "type": "string"
+        },
+        "strength": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "confidence": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "estimatorOutput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimator_id",
+        "estimated_value",
+        "tolerance_band"
+      ],
+      "properties": {
+        "estimator_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "estimated_value": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "tolerance_band": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "range": {
+          "$ref": "#/$defs/contributionRange"
+        },
+        "confidence": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "rationale": {
+          "type": "string"
+        }
+      }
+    },
+    "yinYangBalance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional Kazene-style balance interpretation. Yang represents explicit evidence; Yin represents hidden or structural influence.",
+      "properties": {
+        "yang_evidence_score": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "yin_influence_score": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "middle_balance_score": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "balance_state": {
+          "type": "string",
+          "enum": [
+            "yang_dominant",
+            "yin_dominant",
+            "middle_balanced",
+            "unstable",
+            "unknown"
+          ]
+        },
+        "balance_note": {
+          "type": "string"
+        }
+      }
+    },
+    "allocationRecommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "review_required"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "automatic_allocation",
+            "pooled_allocation",
+            "equalized_allocation",
+            "human_review",
+            "dispute_registry",
+            "deferred_allocation",
+            "common_culture_pool",
+            "no_allocation"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "review_reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewReason"
+          },
+          "uniqueItems": true
+        },
+        "range_overlap_summary": {
+          "$ref": "#/$defs/rangeOverlapSummary"
+        },
+        "suggested_distribution": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/distributionItem"
+          }
+        },
+        "shared_pool_policy": {
+          "$ref": "#/$defs/sharedPoolPolicy"
+        }
+      }
+    },
+    "reviewReason": {
+      "type": "string",
+      "enum": [
+        "wide_tolerance_band",
+        "low_evidence_strength",
+        "low_trace_confidence",
+        "low_estimator_agreement",
+        "high_estimator_variance",
+        "high_dispute_risk",
+        "range_overlap_conflict",
+        "high_value_distribution",
+        "counter_evidence_present",
+        "manual_review_requested",
+        "other"
+      ]
+    },
+    "rangeOverlapSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "has_overlap": {
+          "type": "boolean"
+        },
+        "overlap_type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "partial",
+            "significant",
+            "complete",
+            "unclear"
+          ]
+        },
+        "affected_contributors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "uniqueItems": true
+        },
+        "recommended_handling": {
+          "type": "string",
+          "enum": [
+            "differentiate",
+            "equalize",
+            "pool",
+            "review",
+            "defer",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "distributionItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recipient_id",
+        "allocation_share"
+      ],
+      "properties": {
+        "recipient_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "allocation_share": {
+          "$ref": "#/$defs/zeroToOne"
+        },
+        "allocation_type": {
+          "type": "string",
+          "enum": [
+            "individual",
+            "group_pool",
+            "shared_pool",
+            "common_culture_pool",
+            "deferred",
+            "unallocated"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "$comment": "Use additional validation to ensure allocation_share values sum to 1.0 when required."
+    },
+    "sharedPoolPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pool_type": {
+          "type": "string",
+          "enum": [
+            "near_contributor_pool",
+            "shared_influence_pool",
+            "common_culture_pool",
+            "disputed_pool",
+            "deferred_pool"
+          ]
+        },
+        "pool_reason": {
+          "type": "string"
+        },
+        "pool_share": {
+          "$ref": "#/$defs/zeroToOne"
+        }
+      }
+    },
+    "relationships": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "References to related systems or records.",
+      "properties": {
+        "royalty_os_record_id": {
+          "type": "string"
+        },
+        "ksd_record_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "uniqueItems": true
+        },
+        "structure_fingerprint_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "uniqueItems": true
+        },
+        "trace_protocol_record_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "uniqueItems": true
+        },
+        "signed_impact_attestation_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "uniqueItems": true
+        },
+        "dispute_registry_record_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Governance metadata for review, auditability, and dispute handling.",
+      "properties": {
+        "audit_log_uri": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "review_policy_uri": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "dispute_policy_uri": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "human_review_available": {
+          "type": "boolean"
+        },
+        "appeal_available": {
+          "type": "boolean"
+        },
+        "finality_level": {
+          "type": "string",
+          "enum": [
+            "provisional",
+            "reviewed",
+            "disputed",
+            "settled",
+            "superseded",
+            "non_final"
+          ]
+        }
+      }
+    }
+  }
+}
