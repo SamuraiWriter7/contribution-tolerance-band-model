@@ -1,0 +1,302 @@
+name: Validate Specs
+
+on:
+  push:
+    paths:
+      - "schemas/**"
+      - "examples/**"
+      - ".github/workflows/validate-specs.yml"
+  pull_request:
+    paths:
+      - "schemas/**"
+      - "examples/**"
+      - ".github/workflows/validate-specs.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate Contribution Tolerance Band specs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jsonschema
+
+      - name: Debug file tree
+        run: |
+          echo "=== Repository file tree ==="
+          find . -maxdepth 4 -type f | sort
+
+      - name: Validate JSON Schema and sample data
+        run: |
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          from jsonschema import Draft202012Validator, FormatChecker
+
+
+          CHECKS = [
+              {
+                  "name": "Contribution Tolerance Band Model v0.1",
+                  "schema": "schemas/contribution-tolerance-band-v0.1.schema.json",
+                  "sample": "examples/contribution-tolerance-band.sample.json",
+              }
+          ]
+
+          EPSILON = 1e-9
+          failed = False
+
+
+          def fail(message: str) -> None:
+              global failed
+              print(f"ERROR: {message}")
+              failed = True
+
+
+          def load_json(path: Path):
+              try:
+                  with path.open("r", encoding="utf-8") as f:
+                      return json.load(f)
+              except FileNotFoundError:
+                  fail(f"File not found: {path}")
+              except json.JSONDecodeError as e:
+                  fail(f"Invalid JSON in {path}: {e}")
+              return None
+
+
+          def close_enough(a: float, b: float, tolerance: float = EPSILON) -> bool:
+              return abs(a - b) <= tolerance
+
+
+          def clamp_0_1(value: float) -> float:
+              return max(0.0, min(1.0, value))
+
+
+          def check_range_math(
+              *,
+              label: str,
+              estimated_value: float,
+              tolerance_band: float,
+              lower_bound: float,
+              upper_bound: float,
+          ) -> None:
+              if lower_bound > upper_bound:
+                  fail(
+                      f"{label}: lower_bound must be <= upper_bound "
+                      f"(lower={lower_bound}, upper={upper_bound})"
+                  )
+
+              expected_lower = clamp_0_1(estimated_value - tolerance_band)
+              expected_upper = clamp_0_1(estimated_value + tolerance_band)
+
+              if not close_enough(lower_bound, expected_lower):
+                  fail(
+                      f"{label}: lower_bound mismatch. "
+                      f"expected {expected_lower}, got {lower_bound}"
+                  )
+
+              if not close_enough(upper_bound, expected_upper):
+                  fail(
+                      f"{label}: upper_bound mismatch. "
+                      f"expected {expected_upper}, got {upper_bound}"
+                  )
+
+
+          def check_contributor_ranges(sample: dict) -> None:
+              contributors = sample.get("contributors", [])
+
+              for index, contributor in enumerate(contributors):
+                  contributor_id = contributor.get("contributor_id", f"contributors[{index}]")
+                  estimated_value = contributor.get("estimated_value")
+                  tolerance_band = contributor.get("tolerance_band")
+                  range_obj = contributor.get("range", {})
+
+                  if estimated_value is None or tolerance_band is None:
+                      continue
+
+                  check_range_math(
+                      label=f"contributors[{index}] / {contributor_id}",
+                      estimated_value=estimated_value,
+                      tolerance_band=tolerance_band,
+                      lower_bound=range_obj.get("lower_bound"),
+                      upper_bound=range_obj.get("upper_bound"),
+                  )
+
+                  for output_index, output in enumerate(contributor.get("estimator_outputs", [])):
+                      output_range = output.get("range")
+
+                      if output_range is None:
+                          continue
+
+                      estimator_id = output.get("estimator_id", f"estimator_outputs[{output_index}]")
+
+                      check_range_math(
+                          label=(
+                              f"contributors[{index}] / {contributor_id} / "
+                              f"estimator_outputs[{output_index}] / {estimator_id}"
+                          ),
+                          estimated_value=output.get("estimated_value"),
+                          tolerance_band=output.get("tolerance_band"),
+                          lower_bound=output_range.get("lower_bound"),
+                          upper_bound=output_range.get("upper_bound"),
+                      )
+
+
+          def check_allocation_share_sum(sample: dict) -> None:
+              allocation = sample.get("allocation_recommendation", {})
+              suggested_distribution = allocation.get("suggested_distribution", [])
+
+              if not suggested_distribution:
+                  return
+
+              total = sum(
+                  item.get("allocation_share", 0.0)
+                  for item in suggested_distribution
+              )
+
+              if not close_enough(total, 1.0, tolerance=1e-8):
+                  fail(
+                      "allocation_recommendation.suggested_distribution: "
+                      f"allocation_share values must sum to 1.0, got {total}"
+                  )
+
+
+          def check_shared_pool_consistency(sample: dict) -> None:
+              allocation = sample.get("allocation_recommendation", {})
+              shared_pool_policy = allocation.get("shared_pool_policy")
+
+              if not shared_pool_policy:
+                  return
+
+              pool_share = shared_pool_policy.get("pool_share")
+              pool_type = shared_pool_policy.get("pool_type")
+              suggested_distribution = allocation.get("suggested_distribution", [])
+
+              if pool_share is None:
+                  return
+
+              matching_pool_items = [
+                  item for item in suggested_distribution
+                  if item.get("allocation_type") in {
+                      "shared_pool",
+                      "common_culture_pool",
+                      "group_pool"
+                  }
+              ]
+
+              if not matching_pool_items:
+                  fail(
+                      "shared_pool_policy is present, but no matching pool allocation "
+                      "exists in suggested_distribution."
+                  )
+                  return
+
+              pool_total = sum(
+                  item.get("allocation_share", 0.0)
+                  for item in matching_pool_items
+              )
+
+              if not close_enough(pool_total, pool_share, tolerance=1e-8):
+                  fail(
+                      f"shared_pool_policy.pool_share mismatch for {pool_type}. "
+                      f"expected {pool_share}, got {pool_total}"
+                  )
+
+
+          def check_review_flags(sample: dict) -> None:
+              allocation = sample.get("allocation_recommendation", {})
+              review_required = allocation.get("review_required")
+              review_reasons = allocation.get("review_reasons", [])
+
+              if review_required is False and review_reasons:
+                  fail(
+                      "allocation_recommendation.review_reasons must be empty "
+                      "when review_required is false."
+                  )
+
+              for index, contributor in enumerate(sample.get("contributors", [])):
+                  contributor_id = contributor.get("contributor_id", f"contributors[{index}]")
+                  contributor_review_required = contributor.get("review_required")
+                  contributor_review_reasons = contributor.get("review_reasons", [])
+
+                  if contributor_review_required is False and contributor_review_reasons:
+                      fail(
+                          f"contributors[{index}] / {contributor_id}: review_reasons "
+                          "must be empty when review_required is false."
+                      )
+
+
+          def run_schema_validation(schema: dict, sample: dict, name: str) -> None:
+              validator = Draft202012Validator(
+                  schema,
+                  format_checker=FormatChecker()
+              )
+
+              errors = sorted(
+                  validator.iter_errors(sample),
+                  key=lambda e: list(e.path)
+              )
+
+              if errors:
+                  fail(f"{name}: JSON Schema validation failed.")
+                  for error in errors:
+                      path = ".".join(str(part) for part in error.path)
+                      if not path:
+                          path = "<root>"
+                      print(f"  - {path}: {error.message}")
+              else:
+                  print(f"OK: {name} sample is valid against JSON Schema.")
+
+
+          def run_custom_validation(sample: dict, name: str) -> None:
+              print(f"=== Running custom consistency checks for {name} ===")
+              check_contributor_ranges(sample)
+              check_allocation_share_sum(sample)
+              check_shared_pool_consistency(sample)
+              check_review_flags(sample)
+
+              if not failed:
+                  print(f"OK: {name} custom consistency checks passed.")
+
+
+          print("=== Validating Contribution Tolerance Band repository ===")
+
+          for check in CHECKS:
+              name = check["name"]
+              schema_path = Path(check["schema"])
+              sample_path = Path(check["sample"])
+
+              print()
+              print(f"=== Validating {name} ===")
+              print(f"Schema: {schema_path}")
+              print(f"Sample: {sample_path}")
+
+              schema = load_json(schema_path)
+              sample = load_json(sample_path)
+
+              if schema is None or sample is None:
+                  continue
+
+              run_schema_validation(schema, sample, name)
+              run_custom_validation(sample, name)
+
+          print()
+
+          if failed:
+              print("Validation failed.")
+              sys.exit(1)
+
+          print("All validations passed.")
+          PY
