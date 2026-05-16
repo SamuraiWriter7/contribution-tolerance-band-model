@@ -1,0 +1,453 @@
+{
+  "model": "Contribution Tolerance Band Model",
+  "version": "0.1",
+  "contribution_assessment_id": "ctb-2026-0001",
+  "target_work_id": "kazene-royalty-os-example-001",
+  "target_work_type": "protocol",
+  "created_at": "2026-05-16T00:00:00Z",
+  "updated_at": "2026-05-16T00:00:00Z",
+  "assessment_status": "draft",
+  "methodology": {
+    "methodology_id": "ctb-methodology-minimal-v0.1",
+    "description": "Minimal interval-based contribution assessment using evidence strength, trace confidence, estimator agreement, and dispute risk.",
+    "estimator_set": [
+      {
+        "estimator_id": "structure-estimator-001",
+        "estimator_type": "structure_estimator",
+        "weight": 0.3,
+        "description": "Evaluates structural similarity, conceptual lineage, and protocol-level inheritance."
+      },
+      {
+        "estimator_id": "provenance-estimator-001",
+        "estimator_type": "provenance_estimator",
+        "weight": 0.25,
+        "description": "Evaluates direct provenance such as timestamps, repository history, signatures, and publication records."
+      },
+      {
+        "estimator_id": "trace-estimator-001",
+        "estimator_type": "trace_estimator",
+        "weight": 0.25,
+        "description": "Evaluates trace paths between origin records, derivative works, and later outputs."
+      },
+      {
+        "estimator_id": "human-reviewer-001",
+        "estimator_type": "human_reviewer",
+        "weight": 0.2,
+        "description": "Provides human review for context, ambiguity, and dispute-sensitive interpretation."
+      }
+    ],
+    "weights_profile": {
+      "structure_ambiguity_weight": 0.25,
+      "trace_uncertainty_weight": 0.25,
+      "estimator_variance_weight": 0.2,
+      "dispute_risk_weight": 0.15,
+      "evidence_strength_weight": 0.15
+    },
+    "tolerance_policy": {
+      "max_tolerance_band": 0.12,
+      "min_evidence_strength": 0.5,
+      "min_trace_confidence": 0.5,
+      "min_estimator_agreement": 0.6,
+      "max_dispute_risk": 0.35,
+      "wide_band_review_threshold": 0.15,
+      "high_value_distribution_review_required": true
+    }
+  },
+  "contributors": [
+    {
+      "contributor_id": "contributor_A",
+      "contributor_role": "originator",
+      "estimated_value": 0.46,
+      "tolerance_band": 0.04,
+      "range": {
+        "lower_bound": 0.42,
+        "upper_bound": 0.5
+      },
+      "confidence": 0.82,
+      "evidence_strength": 0.78,
+      "trace_confidence": 0.74,
+      "estimator_agreement": 0.81,
+      "dispute_risk": 0.12,
+      "uncertainty_factors": {
+        "structure_ambiguity": 0.18,
+        "trace_uncertainty": 0.22,
+        "estimator_variance": 0.14,
+        "temporal_uncertainty": 0.16,
+        "dispute_uncertainty": 0.12
+      },
+      "evidence": {
+        "direct_evidence": [
+          {
+            "evidence_id": "ev-direct-A-001",
+            "evidence_type": "publication_record",
+            "source_id": "note-publication-record-001",
+            "uri": "https://example.org/records/note-publication-record-001",
+            "description": "Initial publication record showing the contributor's original protocol definition.",
+            "strength": 0.78,
+            "confidence": 0.84,
+            "created_at": "2026-05-01T00:00:00Z"
+          },
+          {
+            "evidence_id": "ev-direct-A-002",
+            "evidence_type": "repository_history",
+            "source_id": "github-history-001",
+            "uri": "https://example.org/records/github-history-001",
+            "description": "Repository history showing early specification drafts and versioned changes.",
+            "strength": 0.76,
+            "confidence": 0.81,
+            "created_at": "2026-05-02T00:00:00Z"
+          }
+        ],
+        "structural_evidence": [
+          {
+            "evidence_id": "ev-structure-A-001",
+            "evidence_type": "structure_fingerprint",
+            "source_id": "ksd-record-001",
+            "uri": "https://example.org/records/ksd-record-001",
+            "description": "Structure fingerprint indicates strong similarity between the origin specification and the assessed target work.",
+            "strength": 0.82,
+            "confidence": 0.8,
+            "created_at": "2026-05-03T00:00:00Z"
+          }
+        ],
+        "trace_evidence": [
+          {
+            "evidence_id": "ev-trace-A-001",
+            "evidence_type": "trace_path",
+            "source_id": "trace-path-001",
+            "uri": "https://example.org/records/trace-path-001",
+            "description": "Trace path links the contributor's initial structure to the later protocol formulation.",
+            "strength": 0.74,
+            "confidence": 0.76,
+            "created_at": "2026-05-04T00:00:00Z"
+          }
+        ],
+        "attestation_evidence": [
+          {
+            "evidence_id": "ev-attestation-A-001",
+            "evidence_type": "signed_impact_attestation",
+            "source_id": "sia-001",
+            "uri": "https://example.org/records/sia-001",
+            "description": "Signed attestation claims that contributor A provided the primary structural origin.",
+            "strength": 0.72,
+            "confidence": 0.75,
+            "created_at": "2026-05-05T00:00:00Z"
+          }
+        ],
+        "counter_evidence": []
+      },
+      "estimator_outputs": [
+        {
+          "estimator_id": "structure-estimator-001",
+          "estimated_value": 0.48,
+          "tolerance_band": 0.04,
+          "range": {
+            "lower_bound": 0.44,
+            "upper_bound": 0.52
+          },
+          "confidence": 0.82,
+          "rationale": "Strong structural continuity and origin-question similarity."
+        },
+        {
+          "estimator_id": "provenance-estimator-001",
+          "estimated_value": 0.45,
+          "tolerance_band": 0.04,
+          "range": {
+            "lower_bound": 0.41,
+            "upper_bound": 0.49
+          },
+          "confidence": 0.79,
+          "rationale": "Publication record and repository history support early origin."
+        },
+        {
+          "estimator_id": "trace-estimator-001",
+          "estimated_value": 0.46,
+          "tolerance_band": 0.05,
+          "range": {
+            "lower_bound": 0.41,
+            "upper_bound": 0.51
+          },
+          "confidence": 0.76,
+          "rationale": "Trace path is present but partially indirect."
+        }
+      ],
+      "contribution_layer": "primary",
+      "yin_yang_balance": {
+        "yang_evidence_score": 0.78,
+        "yin_influence_score": 0.84,
+        "middle_balance_score": 0.81,
+        "balance_state": "middle_balanced",
+        "balance_note": "Both explicit evidence and structural influence are strong, producing a narrow and stable tolerance band."
+      },
+      "review_required": false,
+      "review_reasons": [],
+      "notes": "Contributor A is treated as a primary contributor, but not as an absolute sole origin."
+    },
+    {
+      "contributor_id": "contributor_B",
+      "contributor_role": "implementer",
+      "estimated_value": 0.39,
+      "tolerance_band": 0.04,
+      "range": {
+        "lower_bound": 0.35,
+        "upper_bound": 0.43
+      },
+      "confidence": 0.76,
+      "evidence_strength": 0.69,
+      "trace_confidence": 0.7,
+      "estimator_agreement": 0.73,
+      "dispute_risk": 0.18,
+      "uncertainty_factors": {
+        "structure_ambiguity": 0.24,
+        "trace_uncertainty": 0.28,
+        "estimator_variance": 0.18,
+        "temporal_uncertainty": 0.2,
+        "dispute_uncertainty": 0.18
+      },
+      "evidence": {
+        "direct_evidence": [
+          {
+            "evidence_id": "ev-direct-B-001",
+            "evidence_type": "commit_log",
+            "source_id": "commit-log-001",
+            "uri": "https://example.org/records/commit-log-001",
+            "description": "Commit log showing concrete implementation and schema refinement.",
+            "strength": 0.72,
+            "confidence": 0.78,
+            "created_at": "2026-05-06T00:00:00Z"
+          }
+        ],
+        "structural_evidence": [
+          {
+            "evidence_id": "ev-structure-B-001",
+            "evidence_type": "transformation_pattern",
+            "source_id": "transformation-pattern-001",
+            "uri": "https://example.org/records/transformation-pattern-001",
+            "description": "Contributor B transformed the original concept into a more operational schema structure.",
+            "strength": 0.68,
+            "confidence": 0.7,
+            "created_at": "2026-05-07T00:00:00Z"
+          }
+        ],
+        "trace_evidence": [
+          {
+            "evidence_id": "ev-trace-B-001",
+            "evidence_type": "trace_path",
+            "source_id": "trace-path-002",
+            "uri": "https://example.org/records/trace-path-002",
+            "description": "Trace path links implementation work to the assessed target protocol.",
+            "strength": 0.7,
+            "confidence": 0.72,
+            "created_at": "2026-05-08T00:00:00Z"
+          }
+        ],
+        "attestation_evidence": [],
+        "counter_evidence": []
+      },
+      "estimator_outputs": [
+        {
+          "estimator_id": "structure-estimator-001",
+          "estimated_value": 0.38,
+          "tolerance_band": 0.05,
+          "range": {
+            "lower_bound": 0.33,
+            "upper_bound": 0.43
+          },
+          "confidence": 0.73,
+          "rationale": "Strong implementation transformation but less origin-level contribution."
+        },
+        {
+          "estimator_id": "provenance-estimator-001",
+          "estimated_value": 0.4,
+          "tolerance_band": 0.04,
+          "range": {
+            "lower_bound": 0.36,
+            "upper_bound": 0.44
+          },
+          "confidence": 0.75,
+          "rationale": "Commit history supports concrete contribution."
+        },
+        {
+          "estimator_id": "trace-estimator-001",
+          "estimated_value": 0.39,
+          "tolerance_band": 0.04,
+          "range": {
+            "lower_bound": 0.35,
+            "upper_bound": 0.43
+          },
+          "confidence": 0.71,
+          "rationale": "Trace confidence is moderate and sufficiently consistent."
+        }
+      ],
+      "contribution_layer": "near",
+      "yin_yang_balance": {
+        "yang_evidence_score": 0.74,
+        "yin_influence_score": 0.62,
+        "middle_balance_score": 0.7,
+        "balance_state": "yang_dominant",
+        "balance_note": "Contribution is supported mainly by explicit implementation evidence."
+      },
+      "review_required": false,
+      "review_reasons": [],
+      "notes": "Contributor B is treated as a near contributor because the range partially overlaps with contributor A."
+    },
+    {
+      "contributor_id": "contributor_C",
+      "contributor_role": "editor",
+      "estimated_value": 0.15,
+      "tolerance_band": 0.03,
+      "range": {
+        "lower_bound": 0.12,
+        "upper_bound": 0.18
+      },
+      "confidence": 0.68,
+      "evidence_strength": 0.61,
+      "trace_confidence": 0.58,
+      "estimator_agreement": 0.66,
+      "dispute_risk": 0.24,
+      "uncertainty_factors": {
+        "structure_ambiguity": 0.32,
+        "trace_uncertainty": 0.34,
+        "estimator_variance": 0.22,
+        "temporal_uncertainty": 0.25,
+        "dispute_uncertainty": 0.24
+      },
+      "evidence": {
+        "direct_evidence": [
+          {
+            "evidence_id": "ev-direct-C-001",
+            "evidence_type": "human_review",
+            "source_id": "human-review-001",
+            "uri": "https://example.org/records/human-review-001",
+            "description": "Human review indicates editorial and explanatory contribution.",
+            "strength": 0.58,
+            "confidence": 0.64,
+            "created_at": "2026-05-09T00:00:00Z"
+          }
+        ],
+        "structural_evidence": [
+          {
+            "evidence_id": "ev-structure-C-001",
+            "evidence_type": "conceptual_lineage",
+            "source_id": "conceptual-lineage-001",
+            "uri": "https://example.org/records/conceptual-lineage-001",
+            "description": "Contributor C improved explanation and terminology but did not originate the main structure.",
+            "strength": 0.6,
+            "confidence": 0.63,
+            "created_at": "2026-05-10T00:00:00Z"
+          }
+        ],
+        "trace_evidence": [],
+        "attestation_evidence": [],
+        "counter_evidence": []
+      },
+      "estimator_outputs": [
+        {
+          "estimator_id": "structure-estimator-001",
+          "estimated_value": 0.14,
+          "tolerance_band": 0.03,
+          "range": {
+            "lower_bound": 0.11,
+            "upper_bound": 0.17
+          },
+          "confidence": 0.65,
+          "rationale": "Contribution is mainly explanatory and editorial."
+        },
+        {
+          "estimator_id": "human-reviewer-001",
+          "estimated_value": 0.16,
+          "tolerance_band": 0.03,
+          "range": {
+            "lower_bound": 0.13,
+            "upper_bound": 0.19
+          },
+          "confidence": 0.68,
+          "rationale": "Human review supports supporting-layer attribution."
+        }
+      ],
+      "contribution_layer": "supporting",
+      "yin_yang_balance": {
+        "yang_evidence_score": 0.56,
+        "yin_influence_score": 0.48,
+        "middle_balance_score": 0.58,
+        "balance_state": "middle_balanced",
+        "balance_note": "Contribution is modest but sufficiently supported for a supporting layer."
+      },
+      "review_required": false,
+      "review_reasons": [],
+      "notes": "Contributor C is treated as a supporting contributor."
+    }
+  ],
+  "allocation_recommendation": {
+    "type": "pooled_allocation",
+    "reason": "Contributor A and contributor B have partially overlapping ranges, so strict ranking should be avoided. Contributor C remains in the supporting layer.",
+    "review_required": false,
+    "review_reasons": [],
+    "range_overlap_summary": {
+      "has_overlap": true,
+      "overlap_type": "partial",
+      "affected_contributors": [
+        "contributor_A",
+        "contributor_B"
+      ],
+      "recommended_handling": "pool"
+    },
+    "suggested_distribution": [
+      {
+        "recipient_id": "contributor_A",
+        "allocation_share": 0.42,
+        "allocation_type": "individual",
+        "reason": "Primary contribution range is strongest, but partially overlaps with contributor B."
+      },
+      {
+        "recipient_id": "contributor_B",
+        "allocation_share": 0.38,
+        "allocation_type": "individual",
+        "reason": "Near contribution range overlaps with contributor A and is supported by implementation evidence."
+      },
+      {
+        "recipient_id": "contributor_C",
+        "allocation_share": 0.15,
+        "allocation_type": "individual",
+        "reason": "Supporting contribution is credible but clearly separated from primary and near layers."
+      },
+      {
+        "recipient_id": "shared_influence_pool",
+        "allocation_share": 0.05,
+        "allocation_type": "shared_pool",
+        "reason": "A small share is reserved for unresolved shared influence and future evidence updates."
+      }
+    ],
+    "shared_pool_policy": {
+      "pool_type": "shared_influence_pool",
+      "pool_reason": "Some influence may be real but not individually attributable with sufficient confidence.",
+      "pool_share": 0.05
+    }
+  },
+  "relationships": {
+    "royalty_os_record_id": "royalty-os-record-001",
+    "ksd_record_ids": [
+      "ksd-record-001"
+    ],
+    "structure_fingerprint_ids": [
+      "sf-record-001"
+    ],
+    "trace_protocol_record_ids": [
+      "trace-path-001",
+      "trace-path-002"
+    ],
+    "signed_impact_attestation_ids": [
+      "sia-001"
+    ],
+    "dispute_registry_record_ids": []
+  },
+  "governance": {
+    "audit_log_uri": "https://example.org/audit/ctb-2026-0001",
+    "review_policy_uri": "https://example.org/policies/review-policy-v0.1",
+    "dispute_policy_uri": "https://example.org/policies/dispute-policy-v0.1",
+    "human_review_available": true,
+    "appeal_available": true,
+    "finality_level": "provisional"
+  },
+  "notes": "This sample demonstrates interval-based contribution assessment. It intentionally avoids false precision by using tolerance bands, overlap rules, and shared influence handling."
+}
